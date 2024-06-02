@@ -1,0 +1,151 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+#define SIZE 10
+
+// Structure for a hash table entry
+typedef struct {
+    int key;
+    int value;
+    bool occupied;
+} HashEntry;
+
+// Structure for a hash table
+typedef struct {
+    HashEntry *table;
+    int size;
+} HashTable;
+
+// Function to initialize a hash table
+HashTable* createHashTable(int size) {
+    HashTable* hashTable = (HashTable*)malloc(sizeof(HashTable));
+    hashTable->size = size;
+    hashTable->table = (HashEntry*)malloc(size * sizeof(HashEntry));
+    for (int i = 0; i < size; i++) {
+        hashTable->table[i].occupied = false;
+    }
+    return hashTable;
+}
+
+// Function to calculate hash index
+int hashCode(int key, int size) {
+    return key % size;
+}
+
+// Function to insert key-value pair into hash table using open addressing
+void insertOpenAddressing(HashTable* hashTable, int key, int value) {
+    int index = hashCode(key, hashTable->size);
+    while (hashTable->table[index].occupied) {
+        index = (index + 1) % hashTable->size;
+    }
+    hashTable->table[index].key = key;
+    hashTable->table[index].value = value;
+    hashTable->table[index].occupied = true;
+}
+
+// Function to search for a key in hash table using open addressing
+int searchOpenAddressing(HashTable* hashTable, int key) {
+    int index = hashCode(key, hashTable->size);
+    while (hashTable->table[index].occupied) {
+        if (hashTable->table[index].key == key) {
+            return hashTable->table[index].value;
+        }
+        index = (index + 1) % hashTable->size;
+    }
+    return -1; // Key not found
+}
+
+// Function to insert key-value pair into hash table using closed addressing
+void insertClosedAddressing(HashTable* hashTable, int key, int value) {
+    int index = hashCode(key, hashTable->size);
+    while (hashTable->table[index].occupied) {
+        index = (index + 1) % hashTable->size;
+    }
+    hashTable->table[index].key = key;
+    hashTable->table[index].value = value;
+    hashTable->table[index].occupied = true;
+}
+
+// Function to search for a key in hash table using closed addressing
+int searchClosedAddressing(HashTable* hashTable, int key) {
+    int index = hashCode(key, hashTable->size);
+    while (hashTable->table[index].occupied) {
+        if (hashTable->table[index].key == key) {
+            return hashTable->table[index].value;
+        }
+        index = (index + 1) % hashTable->size;
+    }
+    return -1; // Key not found
+}
+
+// Function to insert key-value pair into hash table using rehashing
+void insertRehashing(HashTable* hashTable, int key, int value) {
+    int index = hashCode(key, hashTable->size);
+    int originalIndex = index;
+    int i = 1;
+    while (hashTable->table[index].occupied) {
+        index = (originalIndex + i * i) % hashTable->size;
+        i++;
+    }
+    hashTable->table[index].key = key;
+    hashTable->table[index].value = value;
+    hashTable->table[index].occupied = true;
+}
+
+// Function to search for a key in hash table using rehashing
+int searchRehashing(HashTable* hashTable, int key) {
+    int index = hashCode(key, hashTable->size);
+    int originalIndex = index;
+    int i = 1;
+    while (hashTable->table[index].occupied) {
+        if (hashTable->table[index].key == key) {
+            return hashTable->table[index].value;
+        }
+        index = (originalIndex + i * i) % hashTable->size;
+        i++;
+    }
+    return -1; // Key not found
+}
+
+// Function to display the hash table
+void displayHashTable(HashTable* hashTable) {
+    printf("Key\tValue\n");
+    for (int i = 0; i < hashTable->size; i++) {
+        if (hashTable->table[i].occupied) {
+            printf("%d\t%d\n", hashTable->table[i].key, hashTable->table[i].value);
+        }
+    }
+}
+
+// Driver program
+int main() {
+    HashTable* hashTableOpenAddressing = createHashTable(SIZE);
+    HashTable* hashTableClosedAddressing = createHashTable(SIZE);
+    HashTable* hashTableRehashing = createHashTable(SIZE);
+
+    // Inserting key-value pairs using different collision resolution techniques
+    insertOpenAddressing(hashTableOpenAddressing, 5, 10);
+    insertOpenAddressing(hashTableOpenAddressing, 15, 20);
+    insertOpenAddressing(hashTableOpenAddressing, 25, 30);
+
+    insertClosedAddressing(hashTableClosedAddressing, 5, 10);
+    insertClosedAddressing(hashTableClosedAddressing, 15, 20);
+    insertClosedAddressing(hashTableClosedAddressing, 25, 30);
+
+    insertRehashing(hashTableRehashing, 5, 10);
+    insertRehashing(hashTableRehashing, 15, 20);
+    insertRehashing(hashTableRehashing, 25, 30);
+
+    // Displaying hash tables
+    printf("Hash Table with Open Addressing:\n");
+    displayHashTable(hashTableOpenAddressing);
+
+    printf("\nHash Table with Closed Addressing:\n");
+    displayHashTable(hashTableClosedAddressing);
+
+    printf("\nHash Table with Rehashing:\n");
+    displayHashTable(hashTableRehashing);
+
+    return 0;
+}
