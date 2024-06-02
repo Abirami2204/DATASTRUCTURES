@@ -1,0 +1,168 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Node structure for polynomial linked list
+struct Node {
+    int coeff;
+    int exp;
+    struct Node* next;
+};
+
+// Function to create a new node
+struct Node* createNode(int coeff, int exp) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->coeff = coeff;
+    newNode->exp = exp;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Function to insert a new node in the polynomial list
+void insertNode(struct Node** head, int coeff, int exp) {
+    struct Node* newNode = createNode(coeff, exp);
+    if (*head == NULL) {
+        *head = newNode;
+        return;
+    }
+    struct Node* temp = *head;
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+    temp->next = newNode;
+}
+
+// Function to display the polynomial
+void display(struct Node* head) {
+    struct Node* temp = head;
+    while (temp != NULL) {
+        printf("%dx^%d", temp->coeff, temp->exp);
+        temp = temp->next;
+        if (temp != NULL) {
+            printf(" + ");
+        }
+    }
+    printf("\n");
+}
+
+// Function to add two polynomials
+struct Node* addPolynomials(struct Node* poly1, struct Node* poly2) {
+    struct Node* result = NULL;
+    struct Node* p1 = poly1;
+    struct Node* p2 = poly2;
+    
+    while (p1 != NULL && p2 != NULL) {
+        if (p1->exp > p2->exp) {
+            insertNode(&result, p1->coeff, p1->exp);
+            p1 = p1->next;
+        } else if (p1->exp < p2->exp) {
+            insertNode(&result, p2->coeff, p2->exp);
+            p2 = p2->next;
+        } else {
+            int coeffSum = p1->coeff + p2->coeff;
+            if (coeffSum != 0) {
+                insertNode(&result, coeffSum, p1->exp);
+            }
+            p1 = p1->next;
+            p2 = p2->next;
+        }
+    }
+    
+    while (p1 != NULL) {
+        insertNode(&result, p1->coeff, p1->exp);
+        p1 = p1->next;
+    }
+    
+    while (p2 != NULL) {
+        insertNode(&result, p2->coeff, p2->exp);
+        p2 = p2->next;
+    }
+    
+    return result;
+}
+
+// Function to subtract two polynomials
+struct Node* subtractPolynomials(struct Node* poly1, struct Node* poly2) {
+    struct Node* result = NULL;
+    struct Node* p1 = poly1;
+    struct Node* p2 = poly2;
+    
+    while (p1 != NULL && p2 != NULL) {
+        if (p1->exp > p2->exp) {
+            insertNode(&result, p1->coeff, p1->exp);
+            p1 = p1->next;
+        } else if (p1->exp < p2->exp) {
+            insertNode(&result, -p2->coeff, p2->exp);
+            p2 = p2->next;
+        } else {
+            int coeffDiff = p1->coeff - p2->coeff;
+            if (coeffDiff != 0) {
+                insertNode(&result, coeffDiff, p1->exp);
+            }
+            p1 = p1->next;
+            p2 = p2->next;
+        }
+    }
+    
+    while (p1 != NULL) {
+        insertNode(&result, p1->coeff, p1->exp);
+        p1 = p1->next;
+    }
+    
+    while (p2 != NULL) {
+        insertNode(&result, -p2->coeff, p2->exp);
+        p2 = p2->next;
+    }
+    
+    return result;
+}
+
+// Function to multiply two polynomials
+struct Node* multiplyPolynomials(struct Node* poly1, struct Node* poly2) {
+    struct Node* result = NULL;
+    
+    for (struct Node* p1 = poly1; p1 != NULL; p1 = p1->next) {
+        struct Node* temp = NULL;
+        for (struct Node* p2 = poly2; p2 != NULL; p2 = p2->next) {
+            int coeffProd = p1->coeff * p2->coeff;
+            int expSum = p1->exp + p2->exp;
+            insertNode(&temp, coeffProd, expSum);
+        }
+        result = addPolynomials(result, temp);
+    }
+    
+    return result;
+}
+
+int main() {
+    struct Node* poly1 = NULL;
+    struct Node* poly2 = NULL;
+    
+    // Creating first polynomial: 3x^3 + 2x^2 + 1
+    insertNode(&poly1, 3, 3);
+    insertNode(&poly1, 2, 2);
+    insertNode(&poly1, 1, 0);
+    
+    // Creating second polynomial: 4x^2 + 3x + 2
+    insertNode(&poly2, 4, 2);
+    insertNode(&poly2, 3, 1);
+    insertNode(&poly2, 2, 0);
+    
+    printf("First polynomial: ");
+    display(poly1);
+    printf("Second polynomial: ");
+    display(poly2);
+    
+    struct Node* sum = addPolynomials(poly1, poly2);
+    printf("Sum of polynomials: ");
+    display(sum);
+    
+    struct Node* diff = subtractPolynomials(poly1, poly2);
+    printf("Difference of polynomials: ");
+    display(diff);
+    
+    struct Node* prod = multiplyPolynomials(poly1, poly2);
+    printf("Product of polynomials: ");
+    display(prod);
+    
+    return 0;
+}
