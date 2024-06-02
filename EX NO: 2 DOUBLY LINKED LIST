@@ -1,0 +1,119 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define the structure for a doubly linked list node
+struct Node {
+    int data;
+    struct Node* next;
+    struct Node* prev;
+};
+
+// Function to create a new node
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->next = NULL;
+    newNode->prev = NULL;
+    return newNode;
+}
+
+// Function to insert a node at the beginning of the list
+void insertAtBeginning(struct Node** head, int data) {
+    struct Node* newNode = createNode(data);
+    newNode->next = *head;
+    if (*head != NULL) {
+        (*head)->prev = newNode;
+    }
+    *head = newNode;
+}
+
+// Function to insert a node at the end of the list
+void insertAtEnd(struct Node** head, int data) {
+    struct Node* newNode = createNode(data);
+    if (*head == NULL) {
+        *head = newNode;
+        return;
+    }
+    struct Node* temp = *head;
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+    temp->next = newNode;
+    newNode->prev = temp;
+}
+
+// Function to delete a node from the list
+void deleteNode(struct Node** head, struct Node* del) {
+    if (*head == NULL || del == NULL) {
+        return;
+    }
+    if (*head == del) {
+        *head = del->next;
+    }
+    if (del->next != NULL) {
+        del->next->prev = del->prev;
+    }
+    if (del->prev != NULL) {
+        del->prev->next = del->next;
+    }
+    free(del);
+}
+
+// Function to search for an element in the list
+struct Node* search(struct Node* head, int key) {
+    struct Node* temp = head;
+    while (temp != NULL) {
+        if (temp->data == key) {
+            return temp;
+        }
+        temp = temp->next;
+    }
+    return NULL;
+}
+
+// Function to display the list
+void display(struct Node* node) {
+    struct Node* last;
+    printf("Traversal in forward direction:\n");
+    while (node != NULL) {
+        printf("%d -> ", node->data);
+        last = node;
+        node = node->next;
+    }
+    printf("NULL\n");
+    
+    printf("Traversal in reverse direction:\n");
+    while (last != NULL) {
+        printf("%d -> ", last->data);
+        last = last->prev;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    struct Node* head = NULL;
+    
+    // Insertion
+    insertAtBeginning(&head, 2);
+    insertAtEnd(&head, 4);
+    insertAtBeginning(&head, 1);
+    insertAtEnd(&head, 5);
+    
+    printf("List after insertions:\n");
+    display(head);
+    
+    // Search
+    struct Node* found = search(head, 4);
+    if (found != NULL) {
+        printf("Element 4 found in the list.\n");
+    } else {
+        printf("Element 4 not found in the list.\n");
+    }
+    
+    // Deletion
+    deleteNode(&head, found);
+    printf("List after deleting element 4:\n");
+    display(head);
+    
+    return 0;
+}
