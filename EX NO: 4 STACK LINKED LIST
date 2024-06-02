@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 100
+
+// Stack implementation using array
+typedef struct {
+    int arr[MAX];
+    int top;
+} StackArray;
+
+// Function to initialize the stack
+void initStackArray(StackArray* stack) {
+    stack->top = -1;
+}
+
+// Function to check if the stack is empty
+int isEmptyArray(StackArray* stack) {
+    return stack->top == -1;
+}
+
+// Function to check if the stack is full
+int isFullArray(StackArray* stack) {
+    return stack->top == MAX - 1;
+}
+
+// Function to push an element into the stack
+void pushArray(StackArray* stack, int value) {
+    if (isFullArray(stack)) {
+        printf("Stack overflow\n");
+        return;
+    }
+    stack->arr[++(stack->top)] = value;
+}
+
+// Function to pop an element from the stack
+int popArray(StackArray* stack) {
+    if (isEmptyArray(stack)) {
+        printf("Stack underflow\n");
+        return -1;
+    }
+    return stack->arr[(stack->top)--];
+}
+
+// Function to get the top element of the stack
+int topArray(StackArray* stack) {
+    if (isEmptyArray(stack)) {
+        printf("Stack is empty\n");
+        return -1;
+    }
+    return stack->arr[stack->top];
+}
+
+// Function to display the elements of the stack
+void displayArray(StackArray* stack) {
+    if (isEmptyArray(stack)) {
+        printf("Stack is empty\n");
+        return;
+    }
+    for (int i = stack->top; i >= 0; i--) {
+        printf("%d ", stack->arr[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    StackArray stack;
+    initStackArray(&stack);
+
+    // Push elements into the stack
+    pushArray(&stack, 10);
+    pushArray(&stack, 20);
+    pushArray(&stack, 30);
+
+    printf("Stack elements after push: ");
+    displayArray(&stack);
+
+    printf("Top element: %d\n", topArray(&stack));
+
+    // Pop an element from the stack
+    printf("Popped element: %d\n", popArray(&stack));
+
+    printf("Stack elements after pop: ");
+    displayArray(&stack);
+
+    return 0;
+}
