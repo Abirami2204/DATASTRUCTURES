@@ -1,0 +1,97 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Node structure for linked list
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+// Stack implementation using linked list
+typedef struct {
+    struct Node* top;
+} StackList;
+
+// Function to create a new node
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Function to initialize the stack
+void initStackList(StackList* stack) {
+    stack->top = NULL;
+}
+
+// Function to check if the stack is empty
+int isEmptyList(StackList* stack) {
+    return stack->top == NULL;
+}
+
+// Function to push an element into the stack
+void pushList(StackList* stack, int value) {
+    struct Node* newNode = createNode(value);
+    newNode->next = stack->top;
+    stack->top = newNode;
+}
+
+// Function to pop an element from the stack
+int popList(StackList* stack) {
+    if (isEmptyList(stack)) {
+        printf("Stack underflow\n");
+        return -1;
+    }
+    struct Node* temp = stack->top;
+    int poppedValue = temp->data;
+    stack->top = stack->top->next;
+    free(temp);
+    return poppedValue;
+}
+
+// Function to get the top element of the stack
+int topList(StackList* stack) {
+    if (isEmptyList(stack)) {
+        printf("Stack is empty\n");
+        return -1;
+    }
+    return stack->top->data;
+}
+
+// Function to display the elements of the stack
+void displayList(StackList* stack) {
+    if (isEmptyList(stack)) {
+        printf("Stack is empty\n");
+        return;
+    }
+    struct Node* temp = stack->top;
+    while (temp != NULL) {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    StackList stack;
+    initStackList(&stack);
+
+    // Push elements into the stack
+    pushList(&stack, 10);
+    pushList(&stack, 20);
+    pushList(&stack, 30);
+
+    printf("Stack elements after push: ");
+    displayList(&stack);
+
+    printf("Top element: %d\n", topList(&stack));
+
+    // Pop an element from the stack
+    printf("Popped element: %d\n", popList(&stack));
+
+    printf("Stack elements after pop: ");
+    displayList(&stack);
+
+    return 0;
+}
