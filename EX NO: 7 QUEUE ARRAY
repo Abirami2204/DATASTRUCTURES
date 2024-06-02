@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 100
+
+// Queue implementation using array
+typedef struct {
+    int arr[MAX];
+    int front, rear;
+} QueueArray;
+
+// Function to initialize the queue
+void initQueueArray(QueueArray* queue) {
+    queue->front = -1;
+    queue->rear = -1;
+}
+
+// Function to check if the queue is empty
+int isEmptyArray(QueueArray* queue) {
+    return queue->front == -1;
+}
+
+// Function to check if the queue is full
+int isFullArray(QueueArray* queue) {
+    return (queue->rear + 1) % MAX == queue->front;
+}
+
+// Function to enqueue an element into the queue
+void enqueueArray(QueueArray* queue, int value) {
+    if (isFullArray(queue)) {
+        printf("Queue overflow\n");
+        return;
+    }
+    if (isEmptyArray(queue)) {
+        queue->front = 0;
+    }
+    queue->rear = (queue->rear + 1) % MAX;
+    queue->arr[queue->rear] = value;
+}
+
+// Function to dequeue an element from the queue
+int dequeueArray(QueueArray* queue) {
+    if (isEmptyArray(queue)) {
+        printf("Queue underflow\n");
+        return -1;
+    }
+    int value = queue->arr[queue->front];
+    if (queue->front == queue->rear) {
+        queue->front = -1;
+        queue->rear = -1;
+    } else {
+        queue->front = (queue->front + 1) % MAX;
+    }
+    return value;
+}
+
+// Function to display the elements of the queue
+void displayArray(QueueArray* queue) {
+    if (isEmptyArray(queue)) {
+        printf("Queue is empty\n");
+        return;
+    }
+    int i = queue->front;
+    while (i != queue->rear) {
+        printf("%d ", queue->arr[i]);
+        i = (i + 1) % MAX;
+    }
+    printf("%d\n", queue->arr[i]);
+}
+
+int main() {
+    QueueArray queue;
+    initQueueArray(&queue);
+
+    // Enqueue elements into the queue
+    enqueueArray(&queue, 10);
+    enqueueArray(&queue, 20);
+    enqueueArray(&queue, 30);
+
+    printf("Queue elements after enqueue: ");
+    displayArray(&queue);
+
+    // Dequeue an element from the queue
+    int dequeuedValue = dequeueArray(&queue);
+    printf("Dequeued element: %d\n", dequeuedValue);
+
+    printf("Queue elements after dequeue: ");
+    displayArray(&queue);
+
+    return 0;
+}
