@@ -1,0 +1,96 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Node structure for linked list
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+// Queue implementation using linked list
+typedef struct {
+    struct Node* front;
+    struct Node* rear;
+} QueueList;
+
+// Function to create a new node
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Function to initialize the queue
+void initQueueList(QueueList* queue) {
+    queue->front = NULL;
+    queue->rear = NULL;
+}
+
+// Function to check if the queue is empty
+int isEmptyList(QueueList* queue) {
+    return queue->front == NULL;
+}
+
+// Function to enqueue an element into the queue
+void enqueueList(QueueList* queue, int value) {
+    struct Node* newNode = createNode(value);
+    if (isEmptyList(queue)) {
+        queue->front = newNode;
+    } else {
+        queue->rear->next = newNode;
+    }
+    queue->rear = newNode;
+}
+
+// Function to dequeue an element from the queue
+int dequeueList(QueueList* queue) {
+    if (isEmptyList(queue)) {
+        printf("Queue underflow\n");
+        return -1;
+    }
+    int value = queue->front->data;
+    struct Node* temp = queue->front;
+    queue->front = queue->front->next;
+    if (queue->front == NULL) {
+        queue->rear = NULL;
+    }
+    free(temp);
+    return value;
+}
+
+// Function to display the elements of the queue
+void displayList(QueueList* queue) {
+    if (isEmptyList(queue)) {
+        printf("Queue is empty\n");
+        return;
+    }
+    struct Node* temp = queue->front;
+    while (temp != NULL) {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    QueueList queue;
+    initQueueList(&queue);
+
+    // Enqueue elements into the queue
+    enqueueList(&queue, 10);
+    enqueueList(&queue, 20);
+    enqueueList(&queue, 30);
+
+    printf("Queue elements after enqueue: ");
+    displayList(&queue);
+
+    // Dequeue an element from the queue
+    int dequeuedValue = dequeueList(&queue);
+    printf("Dequeued element: %d\n", dequeuedValue);
+
+    printf("Queue elements after dequeue: ");
+    displayList(&queue);
+
+    return 0;
+}
