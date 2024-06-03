@@ -1,6 +1,3 @@
-Here's a C program that demonstrates how to insert a new node with a given value into an AVL tree and then delete a node while maintaining the balance of the tree by performing rotations if necessary:
-
-```c
 #include <stdio.h>
 #include <stdlib.h>
 
